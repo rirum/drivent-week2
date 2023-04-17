@@ -1,5 +1,6 @@
+/* eslint-disable prettier/prettier */
 import { Response } from 'express';
-import httpStatus, { HttpStatus } from 'http-status';
+import httpStatus from 'http-status';
 import { AuthenticatedRequest } from '@/middlewares';
 import ticketService from '@/services/tickets-service';
 
@@ -13,8 +14,16 @@ async function getAllTicketsTypes(req: AuthenticatedRequest, res: Response) {
   }
 }
 
-async function getAllUserTickets() {
+async function getAllUserTickets(req: AuthenticatedRequest, res: Response) {
   //retorna todos os ingressos tickets do usuário(200)
+ try{
+    const userId = req.userId;
+    console.log(userId);
+    const allUserTickets = await ticketService.getAllUserTickets(userId);
+    return res.status(httpStatus.OK).send(allUserTickets);
+ }catch(error){
+  return res.sendStatus(httpStatus.NOT_FOUND)
+ }
   //sem inscrição ou sem cadastro 404
   //usuario sem ingresso 404
 }
