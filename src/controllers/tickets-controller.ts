@@ -20,9 +20,10 @@ async function getAllUserTickets(req: AuthenticatedRequest, res: Response) {
     const userId = req.userId;
     console.log(userId);
     const allUserTickets = await ticketService.getAllUserTickets(userId);
-    return res.status(httpStatus.OK).send(allUserTickets);
+    if (allUserTickets) return res.status(httpStatus.OK).json(allUserTickets);
+    else throw new Error();
  }catch(error){
-  return res.sendStatus(httpStatus.NOT_FOUND)
+  return res.status(httpStatus.NOT_FOUND).send(error)
  }
   //sem inscrição ou sem cadastro 404
   //usuario sem ingresso 404
