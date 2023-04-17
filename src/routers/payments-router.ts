@@ -1,7 +1,8 @@
 import { Router } from 'express';
+import { authenticateToken } from '@/middlewares';
 
 const paymentsRouter = Router();
 
-paymentsRouter.post('/');
+paymentsRouter.all('/', authenticateToken).get('/').post('/process');
 
 export { paymentsRouter };
