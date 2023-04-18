@@ -33,12 +33,16 @@ async function getAllUserTickets(req: AuthenticatedRequest, res: Response) {
 async function postTicket(req: AuthenticatedRequest, res: Response) {
   //cria um novo ingresso pro usuário (201)
   const userId = req.userId;
+
   const { ticketTypeId } = req.body as TicketPost;
+  
   try{
-    
+   
     const ticket = await ticketService.postTicket(userId, ticketTypeId);
+   
     return res.status(httpStatus.CREATED).send(ticket);
   }catch(error){
+    console.log(error)
     return res.status(httpStatus.NOT_FOUND).send(error);
   }
   

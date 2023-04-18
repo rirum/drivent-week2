@@ -23,26 +23,48 @@ async function getTicketById(ticketId: number): Promise<Ticket & { Enrollment: E
 }
 
 async function postTicket(
-  ticketTypeId: number,
   enrollmentId: number,
+  ticketTypeId: number,
   status: TicketStatus,
   id?: number,
-): Promise<Ticket & { TicketType: TicketType }> {
-  return prisma.ticket.create({
-    data: {
-      ticketTypeId,
-      enrollmentId,
-      status,
+): Promise<Ticket> {
+  return prisma.ticket.update({
+    where: {
       id,
     },
-    include: {
-      TicketType: true,
+    data: {
+      status,
     },
   });
 }
 
-async function setTicketStatus(ticketId: number, status: 'PAID' | 'RESERVED') {
-  await prisma.ticket.update({ where: { id: ticketId }, data: { status } });
+async function createTicket(ticketTypeId: number, enrollmentId: number, status: TicketStatus): Promise<Ticket> {
+  return await prisma.ticket.create({
+    data: {
+      ticketTypeId,
+      enrollmentId,
+      status,
+    },
+    select: {
+      createdAt: true,
+      updatedAt: true,
+      id: true,
+      status: true, //RESERVED | PAID
+      ticketTypeId: true,
+      enrollmentId: true,
+      TicketType: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          isRemote: true,
+          includesHotel: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+    },
+  });
 }
 
 const ticketRepository = {
@@ -50,7 +72,7 @@ const ticketRepository = {
   getAllUserTickets,
   postTicket,
   getTicketById,
-  setTicketStatus,
+  createTicket,
 };
 
 export default ticketRepository;

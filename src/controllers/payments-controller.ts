@@ -17,10 +17,10 @@ export async function getPayments(req: AuthenticatedRequest, res: Response, next
 }
 
 export async function postPayment(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  const userId = req.userId;
-  const body = req.body as PaymentBody;
-
   try {
+    const userId = req.userId;
+
+    const body = req.body as PaymentBody;
     if (!body.ticketId || !body.cardData) return res.sendStatus(httpStatus.BAD_REQUEST);
     const paid = await paymentService.postPayment(body, userId);
     return res.status(httpStatus.OK).send(paid);

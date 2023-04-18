@@ -29,12 +29,15 @@ async function postPayment(paymentData: PaymentBody, userId: number): Promise<Pa
   const paymentStatus = 'PAID';
 
   const ticket = await ticketRepository.getTicketById(paymentData.ticketId);
+
   if (!ticket) throw notFoundError();
 
   if (userId !== ticket.Enrollment.userId) throw unauthorizedError();
 
   const payment = await paymentRepository.postPayment(paymentData, ticket.TicketType.price);
+
   await ticketRepository.postTicket(ticket.ticketTypeId, ticket.enrollmentId, paymentStatus, ticket.id);
+
   return payment;
 }
 
