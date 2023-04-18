@@ -1,5 +1,6 @@
 import { TicketType, Ticket, TicketStatus } from '@prisma/client';
 import { enrollmentNotFound } from './error';
+import { prisma } from '@/config';
 import ticketRepository from '@/repositories/ticket-repository';
 import enrollmentRepository from '@/repositories/enrollment-repository';
 
@@ -21,9 +22,11 @@ async function postTicket(ticketTypeId: number, id: number): Promise<Ticket & { 
   const enrollment = await enrollmentRepository.findWithAddressByUserId(id);
   if (!enrollment) throw enrollmentNotFound();
 
-  const result = await ticketRepository.postTicket(ticketTypeId, enrollment.id, status);
+  const result = await ticketRepository.postTicket(enrollment.id, ticketTypeId, status);
+  if (!result) throw new Error();
   return result;
 }
+
 const ticketService = {
   getAllTicketsTypes,
   getAllUserTickets,
