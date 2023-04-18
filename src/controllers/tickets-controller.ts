@@ -3,6 +3,7 @@ import { Response } from 'express';
 import httpStatus from 'http-status';
 import { AuthenticatedRequest } from '@/middlewares';
 import ticketService from '@/services/tickets-service';
+import { TicketPost } from '@/protocols';
 
 async function getAllTicketsTypes(req: AuthenticatedRequest, res: Response) {
   //retorna todos os ticketstype (status 200)
@@ -18,7 +19,7 @@ async function getAllUserTickets(req: AuthenticatedRequest, res: Response) {
   //retorna todos os ingressos tickets do usuário(200)
  try{
     const userId = req.userId;
-    console.log(userId);
+    
     const allUserTickets = await ticketService.getAllUserTickets(userId);
     if (allUserTickets) return res.status(httpStatus.OK).json(allUserTickets);
     else throw new Error();
@@ -29,8 +30,20 @@ async function getAllUserTickets(req: AuthenticatedRequest, res: Response) {
   //usuario sem ingresso 404
 }
 
-async function postTicket() {
+async function postTicket(req: AuthenticatedRequest, res: Response) {
   //cria um novo ingresso pro usuário (201)
+ 
+  try{
+    const userId = req.userId;
+    const { ticketTypeId } = req.body as TicketPost;
+    const ticket = await ticketService.postTicket(userId, ticketTypeId);
+    return res.status(httpStatus.CREATED).send(ticket);
+  }catch(error){
+    return res.status(httpStatus.NOT_FOUND).send(error);
+  }
+  
+
+
   //usuário sem cadastro (404)
   //quando tickettypeid nao é enviada (400)
 }

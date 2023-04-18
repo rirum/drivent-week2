@@ -1,4 +1,4 @@
-import { TicketType, Ticket } from '@prisma/client';
+import { TicketType, Ticket, TicketStatus } from '@prisma/client';
 import { prisma } from '@/config';
 
 async function getAllTicketsTypes() {
@@ -12,9 +12,27 @@ async function getAllUserTickets(enrollmentId: number): Promise<Ticket & { Ticke
   });
 }
 
+async function postTicket(
+  ticketTypeId: number,
+  enrollmentId: number,
+  status: TicketStatus,
+): Promise<Ticket & { TicketType: TicketType }> {
+  return prisma.ticket.create({
+    data: {
+      ticketTypeId,
+      enrollmentId,
+      status,
+    },
+    include: {
+      TicketType: true,
+    },
+  });
+}
+
 const ticketRepository = {
   getAllTicketsTypes,
   getAllUserTickets,
+  postTicket,
 };
 
 export default ticketRepository;
