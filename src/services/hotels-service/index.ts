@@ -9,7 +9,7 @@ async function validateInformation(userId: number){
     const enrollment = await enrollmentRepository.findWithAddressByUserId(userId)
     if (!enrollment) throw notFoundError();
 
-    const ticket = await ticketRepository.getAllUserTickets(enrollment.id);
+    const ticket = await ticketRepository.getTicketByEnrollmentId(enrollment);
     if (!ticket) throw notFoundError();
     console.log(ticket);
     if (ticket.status !== 'PAID' || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel)
