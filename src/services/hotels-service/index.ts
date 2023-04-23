@@ -1,5 +1,5 @@
-import { Hotel } from "@prisma/client";
-import { notFoundError, paymentNotFound } from "@/errors";
+
+import { notFoundError, paymentRequiredError } from "@/errors";
 import enrollmentRepository from "@/repositories/enrollment-repository";
 import ticketRepository from "@/repositories/ticket-repository";
 import hotelRepository from "@/repositories/hotel-repository";
@@ -11,9 +11,9 @@ async function validateInformation(userId: number){
 
     const ticket = await ticketRepository.getAllUserTickets(enrollment.id);
     if (!ticket) throw notFoundError();
-
+    console.log(ticket);
     if (ticket.status !== 'PAID' || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel)
-    throw paymentNotFound();
+    throw paymentRequiredError();
 
 
     return;

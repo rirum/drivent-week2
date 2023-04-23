@@ -1,6 +1,6 @@
 import { ApplicationError } from "@/protocols";
 
-export function paymentNotFound(): ApplicationError {
+export function paymentRequiredError(): ApplicationError {
     return {
         name: 'PaymentRequiredError',
         message: 'Payment Required',
