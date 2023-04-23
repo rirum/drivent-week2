@@ -14,16 +14,7 @@ async function getPayments(userId: number, ticketId: number): Promise<Payment> {
   return await paymentRepository.getPayments(ticketId);
 }
 
-// export async function processPayment(userId: number, paymentData: PaymentBody){
-//     const ticket = await ticketRepository.getTicketById(paymentData.ticketId);
-//     if (!ticket) throw notFoundError();
 
-//     if (ticket.Enrollment.userId !== userId) throw unauthorizedError();
-//     const price = ticket.TicketType.price;
-//     const payment = await paymentRepository.processPayment(payment, price);
-//     await ticketRepository.setTicketStatus(ticket.id, 'PAID');
-//     return payment;
-// }
 
 async function postPayment(paymentData: PaymentBody, userId: number): Promise<Payment> {
   const paymentStatus = 'PAID';
