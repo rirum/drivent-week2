@@ -29,6 +29,10 @@ export async function getHotelById(req: AuthenticatedRequest, res: Response, nex
         return res.status(httpStatus.OK).send(hotel);
 
     }catch(error){
-        next(error)
-    }
+        if (error.name === 'PaymentRequiredError') {
+            return res.status(httpStatus.PAYMENT_REQUIRED).send(error);
+          }
+          return res.status(httpStatus.NOT_FOUND).send(error);
+        }
+    
 }

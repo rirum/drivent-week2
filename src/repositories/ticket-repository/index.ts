@@ -22,23 +22,6 @@ async function getTicketById(ticketId: number): Promise<Ticket & { Enrollment: E
   });
 }
 
-async function getTicketByEnrollmentId(enrollment: Enrollment) {
-  return prisma.ticket.findFirst({
-      where: {
-          enrollmentId: enrollment.id
-      },
-      select: {
-          id: true,
-          status: true,
-          ticketTypeId: true,
-          enrollmentId: true,
-          TicketType: true,
-          createdAt: true,
-          updatedAt: true
-      }
-  })
-
-}
 
 async function postTicket(
   enrollmentId: number,
@@ -91,7 +74,7 @@ const ticketRepository = {
   postTicket,
   getTicketById,
   createTicket,
-  getTicketByEnrollmentId,
+  // getTicketByEnrollmentId,
 };
 
 export default ticketRepository;
