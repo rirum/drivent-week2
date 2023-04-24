@@ -18,24 +18,17 @@ async function getAllHotels(userId: number){
       
   
       if (ticket.status !== 'PAID' || isRemote || !includesHotel) throw paymentRequiredError()
-      console.log("5")
+      
       const hotels = await hotelRepository.getAllHotels();
-      console.log("hotels service")
-      console.log(hotels)
+      
       if (hotels.length === 0) throw notFoundError();
-      console.log(hotels.length)
+     
       return hotels;
     
 
 }
 
-// async function getAllHotels(userId: number){
-//     await validateInformation(userId);
-//     const hotels = await hotelRepository.getAllHotels();
 
-//     if (hotels.length === 0) throw notFoundError();
-//     return hotels
-// }
 
 async function getHotelById(userId: number, hotelId: number){
     const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);

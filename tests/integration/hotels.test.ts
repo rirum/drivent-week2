@@ -124,4 +124,70 @@ describe("GET /hotels/:id", () => {
 
         expect(response.status).toBe(httpStatus.UNAUTHORIZED)
     })
+
+    it("should respond with status 200(success) and with hotel rooms data", async() => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const userEnrollment = await createEnrollmentWithAddress(user);
+        const ticketType = await createTicketWithHotel();
+        await createTicket(userEnrollment.id, ticketType.id, TicketStatus.PAID);
+        const hotel = await createHotel()
+        const room = await createRoom(hotel.id)
+        const result = await server.get(`/hotels/${hotel.id}`).set('Authorization', `Bearer ${token}`);
+
+        expect(result.status).toBe(200)
+        expect(result.body).toEqual({
+            id: hotel.id,
+            name: hotel.name,
+            image: hotel.image,
+            createdAt: hotel.createdAt.toISOString(),
+            updatedAt: hotel.updatedAt.toISOString(),
+            Rooms: [
+              {
+                id: expect.any(Number),
+                name: room.name,
+                capacity: room.capacity,
+                hotelId: room.hotelId,
+                createdAt: room.createdAt.toISOString(),
+                updatedAt: room.updatedAt.toISOString(),
+              },
+            ],
+          });
+    })
+
+    it("should respond with 402(payment required) if tickets isnt remote but doenst includes hotel", async() => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const userEnrollment = await createEnrollmentWithAddress(user);
+        const ticketType = await createTicketWithoutHotel();
+        await createTicket(userEnrollment.id, ticketType.id, TicketStatus.PAID);
+        const hotel = await createHotel();
+        const response = await server.get(`/hotels/${hotel.id}`).set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(402)
+    })
+    it("should respond with status 402(payment required) if the ticket is not paid", async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const userEnrollment = await createEnrollmentWithAddress(user);
+        const ticketType = await createTicketType();
+        await createTicket(userEnrollment.id, ticketType.id, TicketStatus.RESERVED);
+        const hotel = await createHotel();
+        const result = await server.get(`/hotels/${hotel.id}`).set('Authorization', `Bearer ${token}`);
+
+        expect(result.status).toBe(402)
+    })
+
+    it("should respond with 402(payment required) if ticket status is paid but ticket is remote", async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const userEnrollment = await createEnrollmentWithAddress(user);
+        const ticketType = await createRemoteTicketType();
+        await createTicket(userEnrollment.id, ticketType.id, TicketStatus.PAID);
+        const hotel = await createHotel();
+        const response = await server.get(`/hotels/${hotel.id}`).set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(402)
+
+    })
 })
